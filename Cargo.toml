@@ -1,0 +1,17 @@
+[package]
+name = "simd_euclidean"
+version = "0.1.0"
+authors = ["Michael Lazear <lazear@scripps.edu>"]
+edition = "2018"
+
+[dev-dependencies]
+criterion = "0.2"
+rand = "0.6.5"
+
+[[bench]]
+name = "f32"
+harness = false
+
+[[bench]]
+name = "f64"
+harness = false
