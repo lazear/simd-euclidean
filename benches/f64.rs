@@ -30,7 +30,8 @@ fn bench_random(c: &mut Criterion) {
         )
         .with_function("Vectorized", |b, i| {
             b.iter(|| Vectorized::distance(black_box(&i.1), black_box(&i.2)))
-        }).throughput(|s| Throughput::Elements(s.0 as u32))
+        })
+        .throughput(|s| Throughput::Elements(s.0 as u32)),
     );
 }
 

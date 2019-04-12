@@ -1,3 +1,19 @@
+//!
+//! ```rust
+//! # use simd_euclidean::*;
+//! # use rand::*;
+//! for &i in [16, 32, 64, 128].into_iter() {
+//!   // Dispatch to F32x4 or F32x8 (above 64 elements)
+//!     let mut rng = rand::thread_rng();
+//!     let a = (0..i).map(|_| rng.gen::<f32>()).collect::<Vec<f32>>();
+//!     let b = (0..i).map(|_| rng.gen::<f32>()).collect::<Vec<f32>>();
+
+//!     let v = Vectorized::distance(&a, &b);
+//!     let n = Naive::distance(&a, &b);
+//!     assert!((n-v).abs() < 0.00001);
+//! }
+//! ```
+
 #[macro_use]
 mod macros;
 
@@ -40,7 +56,7 @@ pub fn scalar_euclidean<T: Naive>(a: T, b: T) -> T::Output {
 
 /// SIMD-capable calculation of the euclidean distance between two slices
 /// of equal length
-/// 
+///
 /// ```rust
 /// # use simd_euclidean::*;
 /// let distance = vector_euclidean(&[0.1, 0.2, 0.3, 0.4f32] as &[f32], &[0.4, 0.3, 0.2, 0.1f32]);
@@ -137,9 +153,18 @@ mod test {
             let x = &XS[..i];
             let y = &YS[..i];
             let res = scalar_euclidean(x, y);
-            assert!((Vectorized::distance(x, y) - res).abs() < 0.0001, format!("iter {}, {} != {}", i, Vectorized::distance(x, y), res));
-            assert!((F32x8::distance(x, y) - res).abs() < 0.0001, format!("iter {}, {} != {}", i, F32x8::distance(x, y), res));
-            assert!((F32x4::distance(x, y) - res).abs() < 0.0001, format!("iter {}, {} != {}", i, F32x4::distance(x, y), res));
+            assert!(
+                (Vectorized::distance(x, y) - res).abs() < 0.0001,
+                format!("iter {}, {} != {}", i, Vectorized::distance(x, y), res)
+            );
+            assert!(
+                (F32x8::distance(x, y) - res).abs() < 0.0001,
+                format!("iter {}, {} != {}", i, F32x8::distance(x, y), res)
+            );
+            assert!(
+                (F32x4::distance(x, y) - res).abs() < 0.0001,
+                format!("iter {}, {} != {}", i, F32x4::distance(x, y), res)
+            );
         }
     }
 
