@@ -169,7 +169,25 @@ macro_rules! impl_naive {
         impl Naive for &[$ty1] {
             type Output = $ty2;
             type Ty = $ty1;
-            fn squared_distance(self, other: &[$ty1]) -> $ty2 {
+            fn squared_distance(self, other: Self) -> $ty2 {
+                assert_eq!(self.len(), other.len());
+
+                let mut sum = 0 as $ty2;
+                for i in 0..self.len() {
+                    let d = self[i] - other[i];
+                    sum += (d * d) as $ty2;
+                }
+                sum
+            }
+
+            fn distance(self, other: Self) -> $ty2 {
+                Naive::squared_distance(self, other).sqrt()
+            }
+        }
+        impl Naive for &Vec<$ty1> {
+            type Output = $ty2;
+            type Ty = $ty1;
+            fn squared_distance(self, other: Self) -> $ty2 {
                 assert_eq!(self.len(), other.len());
 
                 let mut sum = 0 as $ty2;

@@ -40,7 +40,10 @@ pub fn scalar_euclidean<T: Naive>(a: T, b: T) -> T::Output {
 
 /// SIMD-capable calculation of the euclidean distance between two slices
 /// of equal length
-///
+/// 
+/// ```rust
+/// let distance = vector_euclidean(&[0.1, 0.2, 0.3, 0.4f32], &[0.4, 0.3, 0.2, 0.1f32]);
+/// ```
 /// # Panics
 ///
 /// Will panic if the lengths of the slices are not equal
