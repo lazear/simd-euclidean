@@ -35,29 +35,30 @@ impl_naive!(f32, f32);
 ///
 /// Will panic if the lengths of the slices are not equal
 pub fn scalar_euclidean<T: Naive>(a: T, b: T) -> T::Output {
-    T::distance(a, b)
+    Naive::distance(a, b)
 }
 
 /// SIMD-capable calculation of the euclidean distance between two slices
 /// of equal length
 /// 
 /// ```rust
-/// let distance = vector_euclidean(&[0.1, 0.2, 0.3, 0.4f32], &[0.4, 0.3, 0.2, 0.1f32]);
+/// # use simd_euclidean::*;
+/// let distance = vector_euclidean(&[0.1, 0.2, 0.3, 0.4f32] as &[f32], &[0.4, 0.3, 0.2, 0.1f32]);
 /// ```
 /// # Panics
 ///
 /// Will panic if the lengths of the slices are not equal
 pub fn vector_euclidean<T: Vectorized>(a: T, b: T) -> T::Output {
-    T::distance(a, b)
+    Vectorized::distance(a, b)
 }
 
 impl Vectorized for &[f32] {
     type Output = f32;
     fn squared_distance(self, other: Self) -> Self::Output {
         if self.len() >= 64 {
-            F32x8::distance(self, other)
+            F32x8::squared_distance(self, other)
         } else {
-            F32x4::distance(self, other)
+            F32x4::squared_distance(self, other)
         }
     }
 
@@ -70,9 +71,9 @@ impl Vectorized for &Vec<f32> {
     type Output = f32;
     fn squared_distance(self, other: Self) -> Self::Output {
         if self.len() >= 64 {
-            F32x8::distance(self, other)
+            F32x8::squared_distance(self, other)
         } else {
-            F32x4::distance(self, other)
+            F32x4::squared_distance(self, other)
         }
     }
 
@@ -85,9 +86,9 @@ impl Vectorized for &[f64] {
     type Output = f64;
     fn squared_distance(self, other: Self) -> Self::Output {
         if self.len() >= 16 {
-            F64x4::distance(self, other)
+            F64x4::squared_distance(self, other)
         } else {
-            F64x2::distance(self, other)
+            F64x2::squared_distance(self, other)
         }
     }
 
@@ -100,9 +101,9 @@ impl Vectorized for &Vec<f64> {
     type Output = f64;
     fn squared_distance(self, other: Self) -> Self::Output {
         if self.len() >= 16 {
-            F64x4::distance(self, other)
+            F64x4::squared_distance(self, other)
         } else {
-            F64x2::distance(self, other)
+            F64x2::squared_distance(self, other)
         }
     }
 
@@ -133,12 +134,12 @@ mod test {
     #[test]
     fn verify() {
         for i in 0..XS.len() {
-            let x = &XS[0..i];
-            let y = &YS[0..i];
+            let x = &XS[..i];
+            let y = &YS[..i];
             let res = scalar_euclidean(x, y);
-            assert!((vector_euclidean(x, y) - res).abs() < 0.0001);
-            assert!((F32x8::distance(x, y) - res).abs() < 0.0001);
-            assert!((F32x4::distance(x, y) - res).abs() < 0.0001);
+            assert!((Vectorized::distance(x, y) - res).abs() < 0.0001, format!("iter {}, {} != {}", i, Vectorized::distance(x, y), res));
+            assert!((F32x8::distance(x, y) - res).abs() < 0.0001, format!("iter {}, {} != {}", i, F32x8::distance(x, y), res));
+            assert!((F32x4::distance(x, y) - res).abs() < 0.0001, format!("iter {}, {} != {}", i, F32x4::distance(x, y), res));
         }
     }
 

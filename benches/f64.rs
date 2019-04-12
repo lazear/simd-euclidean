@@ -22,7 +22,7 @@ fn bench_random(c: &mut Criterion) {
     }
 
     c.bench(
-        "Random inputs",
+        "Random inputs f64",
         ParameterizedBenchmark::new(
             "Naive",
             |b, i| b.iter(|| Naive::distance(black_box(&i.1), black_box(&i.2))),

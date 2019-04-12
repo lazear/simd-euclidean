@@ -137,7 +137,7 @@ macro_rules! impl_euclidean {
             pub fn squared_distance(a: &[$ty], b: &[$ty]) -> $ty {
                 assert_eq!(a.len(), b.len());
                 if a.len() < $name::lanes() {
-                    return a.distance(b);
+                    return Naive::squared_distance(a,b);
                 }
 
                 let mut i = 0;

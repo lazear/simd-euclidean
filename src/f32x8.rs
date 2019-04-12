@@ -20,10 +20,6 @@ impl F32x8 {
         }
     }
 
-    pub unsafe fn load_aligned(slice: &[f32]) -> Self {
-        *(slice.get_unchecked(0) as *const f32 as *const Self)
-    }
-
     pub fn horizontal_add(self) -> f32 {
         self.0 + self.1 + self.2 + self.3 + self.4 + self.5 + self.6 + self.7
     }
