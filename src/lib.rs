@@ -155,16 +155,46 @@ mod test {
             let res = scalar_euclidean(x, y);
             assert!(
                 (Vectorized::distance(x, y) - res).abs() < 0.0001,
-                format!("iter {}, {} != {}", i, Vectorized::distance(x, y), res)
+                "iter {}, {} != {}",
+                i,
+                Vectorized::distance(x, y),
+                res
             );
             assert!(
                 (F32x8::distance(x, y) - res).abs() < 0.0001,
-                format!("iter {}, {} != {}", i, F32x8::distance(x, y), res)
+                "iter {}, {} != {}",
+                i,
+                F32x8::distance(x, y),
+                res
             );
             assert!(
                 (F32x4::distance(x, y) - res).abs() < 0.0001,
-                format!("iter {}, {} != {}", i, F32x4::distance(x, y), res)
+                "iter {}, {} != {}",
+                i,
+                F32x4::distance(x, y),
+                res
             );
+        }
+    }
+
+    #[test]
+    fn verify_random() {
+        use rand::Rng;
+        let mut rng = rand::thread_rng();
+        let input_sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024];
+
+        for &i in input_sizes.iter() {
+            let len = i + rng.gen_range(0, 16) as usize;
+            let mut a = Vec::with_capacity(len);
+            let mut b = Vec::with_capacity(len);
+
+            for _ in 0..len {
+                a.push(rng.gen::<f32>());
+                b.push(rng.gen::<f32>());
+            }
+
+            let diff = (vector_euclidean(&a, &b) - scalar_euclidean(&a, &b)).abs();
+            assert!(diff <= 0.0001, "diff = {}, len = {}", diff, i);
         }
     }
 
