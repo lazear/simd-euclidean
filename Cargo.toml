@@ -3,6 +3,7 @@ name = "simd_euclidean"
 version = "0.1.0"
 authors = ["Michael Lazear <lazear@scripps.edu>"]
 edition = "2018"
+license = "MIT"
 
 [dev-dependencies]
 criterion = "0.2"
