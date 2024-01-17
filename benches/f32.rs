@@ -7,7 +7,7 @@ fn bench_random(c: &mut Criterion) {
     let input_sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024];
 
     let mut inputs = Vec::new();
-    for &i in input_sizes.into_iter() {
+    for &i in input_sizes.iter() {
         let mut a = Vec::with_capacity(i);
         let mut b = Vec::with_capacity(i);
 
