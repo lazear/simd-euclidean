@@ -184,7 +184,7 @@ mod test {
         let input_sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024];
 
         for &i in input_sizes.iter() {
-            let len = i + rng.gen_range(0, 16) as usize;
+            let len = i + rng.gen_range(0..16) as usize;
             let mut a = Vec::with_capacity(len);
             let mut b = Vec::with_capacity(len);
 

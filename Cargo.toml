@@ -7,7 +7,7 @@ license = "MIT"
 
 [dev-dependencies]
 criterion = "0.2"
-rand = "0.6.5"
+rand = "0.8"
 
 [[bench]]
 name = "f32"
