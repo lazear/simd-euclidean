@@ -6,7 +6,7 @@ fn bench_random(c: &mut Criterion) {
     let mut rng = thread_rng();
     let input_sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024];
 
-    let mut inputs = Vec::new();
+    let mut group = c.benchmark_group("Random inputs f32");
     for &i in input_sizes.iter() {
         let mut a = Vec::with_capacity(i);
         let mut b = Vec::with_capacity(i);
@@ -18,21 +18,22 @@ fn bench_random(c: &mut Criterion) {
             b.push(rng.gen::<f64>());
         }
 
-        inputs.push((i, a, b))
+        group.throughput(Throughput::Elements(i as u64));
+        group.bench_with_input(
+            BenchmarkId::from_parameter(format!("Naive_{i}")),
+            &(&a, &b),
+            |bencher, (a, b)| {
+                bencher.iter(|| Naive::distance(black_box(*a), black_box(*b)));
+            },
+        );
+        group.bench_with_input(
+            BenchmarkId::from_parameter(format!("Vectorized_{i}")),
+            &(&a, &b),
+            |bencher, (a, b)| bencher.iter(|| Vectorized::distance(black_box(*a), black_box(*b))),
+        );
     }
 
-    c.bench(
-        "Random inputs f64",
-        ParameterizedBenchmark::new(
-            "Naive",
-            |b, i| b.iter(|| Naive::distance(black_box(&i.1), black_box(&i.2))),
-            inputs,
-        )
-        .with_function("Vectorized", |b, i| {
-            b.iter(|| Vectorized::distance(black_box(&i.1), black_box(&i.2)))
-        })
-        .throughput(|s| Throughput::Elements(s.0 as u32)),
-    );
+    group.finish();
 }
 
 criterion_group!(benches, bench_random);
